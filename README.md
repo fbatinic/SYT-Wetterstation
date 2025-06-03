@@ -6,7 +6,7 @@ Datum: **03.06.2025**
 Im Zuge des Systemtechnik- und ITP-Unterrichts wurde eine Wetterstation gebaut. Die Funktionen wurden durch die Gruppeneinteilung bestimmt. Zentral war hierfür die Verwendung des Mikrocontrollers ESP32C3 Dev Module, welcher die Realisierung ermöglichte. 
 
 ## 2.  Projektbeschreibung
-Es wurde ein kompaktes System entwickelt, das mithilfe eines DHT11-Sensors in regelmäßigen Abständen Temperatur und Luftfeuchtigkeit misst. Die erfassten Daten werden über die serielle Schnittstelle ausgegeben und in einem Graphen zusammengefasst. Zusätzlich gibt es einen Sensor, der Erschütterungen wahrnimmt. Außerdem wurde ein Discord-Bot integriert, der auf Anfrage die aktuellen Messdaten übermittelt.
+Es wurde ein kompaktes System entwickelt, das mithilfe eines DHT11-Sensors in regelmäßigen Abständen Temperatur und Luftfeuchtigkeit misst. Die erfassten Daten werden über die serielle Schnittstelle ausgegeben und in einem Graphen zusammengefasst. Zusätzlich gibt es einen Sensor, der Erschütterungen wahrnimmt.
 #### GK:
 - WLAN Verbindung ermöglichen
 - Messungen:
@@ -44,7 +44,7 @@ Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sens
     
 
 ## 6. Code
-<pre>```cpp
+<pre>
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DHT.h>
@@ -456,12 +456,12 @@ void loop() {
       Serial.println("❌ Fehler beim Lesen vom DHT11");
     }
   }
-}```</pre>
+}</pre>
 
 ## 7.  Zusammenfassung
 Die Wetterstation misst Temperatur, Luftfeuchtigkeit und Erschütterungen mit Sensoren und bereitet die Daten bereinigt auf. Über WLAN stellt sie die aktuellen Messwerte auf einer einfachen Webseite grafisch dar.  
-Das größte Problem war der Code, da wir uns die Programmiersprache selbst beibringen mussten und oft AI um Hilfe bitten mussten, wenn es sowohl zu Kompilierfehlern, als auch zu Logikfehlern kam.  
-Unsere Klassenkameraden waren auch eine große Hilfestellung.
+Das größte Problem war der Code, da wir uns die Programmiersprache selbst beibringen und daher oft AI um Hilfe bitten mussten, wenn es sowohl zu Kompilierfehlern, als auch  Logikfehlern kam.  
+Unsere Klassenkameraden waren für dieses Projekt ebenfalls eine große Hilfestellung.
 
 ## 6. Quellen
 [ W3Schools](https://www.w3schools.com/js/js_graphics_chartjs.asp)  
