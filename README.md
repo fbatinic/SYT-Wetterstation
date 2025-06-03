@@ -33,14 +33,14 @@ Der zweite Schritt war die Schaltung. Nachdem wir wussten, wie die einzelnen Bes
 Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sensoren nutzen und die Aufgabenstellung erfüllen können.
 
 ## 5. Bilder und Schaltungen
-![Schaltbild](Pfad/zur/datei.png)
-![Wetterstation Live](Pfad/zur/datei.png)
-![Website Screenshot 1](Pfad/zur/datei.png)
-![Website Screenshot 2](C:\Users\batin\OneDrive - tgm - Die Schule der Technik\SYT\GK\Wetterstation\WebsiteScreenshot2.jpg)
+![Schaltbild](Pfad/zur/datei.png)  
+![Wetterstation Live](Pfad/zur/datei.png)  
+![Website Screenshot 1](Pfad/zur/datei.png)  
+![Website Screenshot 2](C:\Users\batin\OneDrive - tgm - Die Schule der Technik\SYT\GK\Wetterstation\WebsiteScreenshot2.jpg)  
 
 ## 6. Code
-```arduino
-#include <WiFi.h>
+<pre>```cpp
+Das hier sollte der richtige Code sein:                                                                  #include <WiFi.h>
 #include <WebServer.h>
 #include <DHT.h>
 #include <time.h>
@@ -69,7 +69,7 @@ bool ledState = true;
 bool shakeDetected = false;
 unsigned long lastShake = 0;
 unsigned long shakeCooldown = 5000;
-String lastPresenceLog = "Noch keine Anwesenheit erkannt.";
+String lastShakeLog = "Noch keine Erschütterung erkannt."; // Name der Variable angepasst
 
 String lastMeasurement = "";
 unsigned long lastRead = 0;
@@ -105,8 +105,9 @@ void setLEDColor(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void initTime() {
+  // Aktuelle Zeitzone: CET-1CEST,M3.5.0/2,M10.5.0/3 (Central European Time mit Sommerzeit)
   configTzTime("CET-1CEST,M3.5.0/2,M10.5.0/3", "pool.ntp.org", "time.nist.gov");
-  while (time(nullptr) < 100000) delay(500);
+  while (time(nullptr) < 100000) delay(500); // Warten, bis die Uhrzeit synchronisiert ist
 }
 
 void setLED(uint8_t r, uint8_t g, uint8_t b) {
@@ -131,20 +132,21 @@ bool isOutlier(float newValue, float* history, int size, float tolerance = 8.0) 
   return abs(newValue - avg) > tolerance;
 }
 
-// ... (Euer vorhandener Code bis zum Ende von setup())
-
 void setup() {
   Serial.begin(115200);
-  pixel.begin(); // <-- Hierher verschoben, sollte nur einmal aufgerufen werden
-  setLED(255, 0, 255); // Initialfarbe beim Start
+  pixel.begin(); // NeoPixel Initialisierung einmalig im Setup
+  setLED(255, 0, 255); // Initialfarbe beim Start (z.B. Magenta)
 
   dht.begin();
   pinMode(sensorPin, INPUT);
 
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) delay(500);
-  setLED(0, 0, 0); // Nach erfolgreicher WLAN-Verbindung
-  Serial.println("WLAN verbunden!");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  setLED(0, 0, 0); // Nach erfolgreicher WLAN-Verbindung LED ausschalten
+  Serial.println("\nWLAN verbunden!");
   Serial.println(WiFi.localIP());
 
   initTime();
@@ -185,7 +187,7 @@ void setup() {
             <p id="ledStatusText">Status: unbekannt</p>
           </div>
         </main>
-        <div class="data-box"><h3>🕵 Anwesenheits-Logbuch</h3><p id="logData">Lade Anwesenheitsdaten...</p></div>
+        <div class="data-box"><h3>🕵 Letzte Erschütterung</h3><p id="logData">Lade Erschütterungsdaten...</p></div>
         <script>
           async function fetchCurrentData() {
             const res = await fetch("/data");
@@ -236,22 +238,29 @@ void setup() {
               }
             });
           }
+          // Initialer Datenabruf und Chart-Zeichnung
           fetchCurrentData();
           drawCharts();
+
           async function fetchLogData() {
-            const res = await fetch("/logbuch");
+            const res = await fetch("/logbuch"); // Ruft Daten von der '/logbuch' Route ab
             const text = await res.text();
             document.getElementById("logData").textContent = text;
           }
-          fetchLogData();
+          fetchLogData(); // Initialer Abruf für Erschütterungsdaten
+
           function hexToRgb(hex) {
             const bigint = parseInt(hex.slice(1), 16);
             return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
           }
+
+          // Event-Listener für den Colorpicker
           document.getElementById("ledColor").addEventListener("input", function () {
             const { r, g, b } = hexToRgb(this.value);
             fetch(/setcolor?r=${r}&g=${g}&b=${b}, { method: "GET" });
           });
+
+          // Funktion zum Setzen der initialen Farbe des Colorpickers
           function setInitialColor() {
             fetch("/getcolor")
               .then(res => res.json())
@@ -262,11 +271,18 @@ void setup() {
                 document.getElementById("ledColor").value = hex;
               });
           }
+
+          // Wird nach dem Laden der Seite ausgeführt
           window.onload = () => {
             fetchCurrentData();
             drawCharts();
-            setInitialColor();
+            setInitialColor(); // Setzt die Farbe des Colorpickers basierend auf dem Mikrocontroller
+            // Aktualisiert Daten alle paar Sekunden
+            setInterval(fetchCurrentData, 5000);
+            setInterval(fetchLogData, 2000); // Aktualisiert Erschütterungsdaten alle 2 Sekunden
           };
+
+          // Event-Listener für den LED An/Aus Button
           document.getElementById("toggleLedButton").addEventListener("click", async function () {
             const res = await fetch("/toggleLED");
             const statusText = await res.text();
@@ -286,16 +302,15 @@ void setup() {
   server.on("/toggleLED", []() {
     ledState = !ledState;
     if (ledState) {
-      // NeoPixel an: z.B. grün
-      // Wenn der manuelle Modus aktiv ist, soll die zuletzt gesetzte Farbe beibehalten werden, nicht auf grün zurückgesetzt werden.
+      // Wenn der manuelle Modus aktiv ist, soll die zuletzt gesetzte Farbe beibehalten werden,
+      // ansonsten auf eine Standardfarbe (z.B. Grün) zurückfallen.
       if (manualColorMode) {
         setLEDColor(ledColor[0], ledColor[1], ledColor[2]);
       } else {
-        setLED(0, 255, 0); // Standardfarbe, wenn nicht im manuellen Modus
+        setLED(0, 255, 0); // Standardfarbe Grün, wenn nicht im manuellen Modus
       }
     } else {
-      // NeoPixel aus
-      setLED(0, 0, 0);
+      setLED(0, 0, 0); // LED ausschalten
     }
     server.send(200, "text/plain", ledState ? "LED eingeschaltet" : "LED ausgeschaltet");
   });
@@ -322,18 +337,19 @@ void setup() {
     server.send(200, "text/plain", data);
   });
 
-  server.on("/logbuch", []() {
-    server.send(200, "text/plain", lastPresenceLog);
+  // Angepasste Route für die letzte Erschütterung
+  server.on("/logbuch", []() { // Route bleibt gleich, Inhalt ändert sich
+    server.send(200, "text/plain", lastShakeLog); // sendet den Inhalt von lastShakeLog
   });
 
-  // Diese Routen MÜSSEN im setup() sein!
+  // Routen für Farbsteuerung müssen im setup() sein
   server.on("/setcolor", []() {
     if (server.hasArg("r") && server.hasArg("g") && server.hasArg("b")) {
       uint8_t r = server.arg("r").toInt();
       uint8_t g = server.arg("g").toInt();
       uint8_t b = server.arg("b").toInt();
       manualColorMode = true; // Manuellen Modus aktivieren
-      ledState = true; // LED einschalten, wenn eine Farbe gesetzt wird
+      ledState = true;        // LED einschalten, wenn eine Farbe gesetzt wird
       setLEDColor(r, g, b);
       server.send(200, "text/plain", "OK");
     } else {
@@ -349,13 +365,11 @@ void setup() {
     server.send(200, "application/json", json);
   });
 
-  // setLEDColor(ledColor[0], ledColor[1], ledColor[2]); // Diese Zeile ist hier nicht nötig, da setLEDColor die globale ledColor aktualisiert
-
-  server.begin();
+  server.begin(); // Startet den Webserver
 }
 
 void loop() {
-  server.handleClient();
+  server.handleClient(); // Muss immer aufgerufen werden, um Anfragen zu verarbeiten
 
   int sensorValue = digitalRead(sensorPin);
   if (sensorValue == HIGH && millis() - lastShake > shakeCooldown) {
@@ -363,15 +377,34 @@ void loop() {
     shakeDetected = true;
     lastShake = millis();
 
+    String currentTime = getFormattedTime(); // Holt den aktuellen Zeitstempel
+    lastShakeLog = "Letzte Erschütterung: " + currentTime; // Aktualisiert die Variable für die Webseite
+    Serial.println(lastShakeLog); // Ausgabe im Serial Monitor für Debugging
+
     // Blinkt nur, wenn LED an ist und nicht im manuellen Farbmodus
     if (ledState && !manualColorMode) {
-      setLED(255, 0, 255); // Magenta
+      setLED(255, 0, 255); // Kurzes Blinken in Magenta
       delay(500);
-      // Nach dem Blinken die ursprüngliche Farbe wiederherstellen
-      setLED(ledColor[0], ledColor[1], ledColor[2]);
+      // Nach dem Blinken die ursprüngliche, temperaturabhängige Farbe wiederherstellen
+      // Hier muss die Logik für die temperaturabhängige Farbe erneut ausgeführt werden
+      // um den korrekten Zustand wiederherzustellen, wenn manualColorMode false ist.
+      // Eine einfachere Lösung ist, die Temperatur erneut zu prüfen:
+      float currentTemperature = dht.readTemperature();
+      if (!isnan(currentTemperature)) {
+        if (currentTemperature > 30) setLED(255, 165, 0);     // orange
+        else if (currentTemperature >= 17.0) setLED(0, 255, 0);  // grün
+        else setLED(0, 0, 255);                     // blau
+      } else {
+        // Falls DHT-Lesung fehlschlägt, auf Standard-Aus-Zustand zurückfallen
+        setLED(0, 0, 0);
+      }
+    } else if (ledState && manualColorMode) {
+      // Wenn manueller Modus aktiv, nach Blinken die manuell gesetzte Farbe wiederherstellen
+      setLEDColor(ledColor[0], ledColor[1], ledColor[2]);
     }
   }
 
+  // Temperatur- und Feuchtigkeitsmessung
   if (lastRead == 0 || millis() - lastRead >= interval) {
     lastRead = millis();
 
@@ -381,7 +414,7 @@ void loop() {
     if (!isnan(humidity) && !isnan(temperature)) {
       if (isOutlier(temperature, lastTemps, lastMeasuresSize) || isOutlier(humidity, lastHums, lastMeasuresSize)) {
         Serial.println("⚠ Ausreißer ignoriert.");
-        return;
+        return; // Verhindert die Verarbeitung von Ausreißern
       }
 
       lastTemps[filterIndex] = temperature;
@@ -404,15 +437,7 @@ void loop() {
         else setLED(0, 0, 255);                     // blau
       }
 
-      // Diese Zeilen müssen HIER ENTFERNT WERDEN, da sie schon im setup() sind.
-      // server.on("/setcolor", ...
-      // server.on("/getcolor", ...
-      // pixel.begin();
-      // setLED(255, 0, 0);
-      // setLEDColor(ledColor[0], ledColor[1], ledColor[2]);
-
-
-      if (millis() - lastAverageTime >= 300000 || lastAverageTime == 0) {
+      if (millis() - lastAverageTime >= 300000 || lastAverageTime == 0) { // Alle 5 Minuten (300000 ms) Durchschnitt berechnen
         avgTemperatures[dataIndex] = tempSum / readingsCount;
         avgHumidities[dataIndex] = humSum / readingsCount;
         timestamps[dataIndex] = time;
@@ -426,16 +451,16 @@ void loop() {
       Serial.println("❌ Fehler beim Lesen vom DHT11");
     }
   }
-}
-```
+}```</pre>
+
 ## 7.  Zusammenfassung
-Die Wetterstation misst Temperatur, Luftfeuchtigkeit und Erschütterungen mit Sensoren und bereitet die Daten bereinigt auf. Über WLAN stellt sie die aktuellen Messwerte auf einer einfachen Webseite grafisch dar.
-Das größte Problem war der Code, da wir uns die Programmiersprache selbst beibringen mussten und oft AI um Hilfe bitten mussten, wenn es sowohl zu Kompilierfehlern, als auch zu Logikfehlern kam.
+Die Wetterstation misst Temperatur, Luftfeuchtigkeit und Erschütterungen mit Sensoren und bereitet die Daten bereinigt auf. Über WLAN stellt sie die aktuellen Messwerte auf einer einfachen Webseite grafisch dar.  
+Das größte Problem war der Code, da wir uns die Programmiersprache selbst beibringen mussten und oft AI um Hilfe bitten mussten, wenn es sowohl zu Kompilierfehlern, als auch zu Logikfehlern kam.  
 Unsere Klassenkameraden waren auch eine große Hilfestellung.
 
 ## 6. Quellen
-[ W3Schools](https://www.w3schools.com/js/js_graphics_chartjs.asp)
-[DHT11 Humidity & Temperature Sensor Datneblatt](https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf?srsltid=AfmBOoqPCNak94LpvzB-ri8S4-YdEU9O6y3Oz7485Y2GzXr8UpFO9wqf)
-[Erschütterungssensor B-231Datenblatt](https://www.alldatasheet.com/view.jsp?Searchword=B-231&sField=2)
-[ChatGPT](https://chatgpt.com/)
-[Perplexity](https://www.perplexity.ai/)
+[ W3Schools](https://www.w3schools.com/js/js_graphics_chartjs.asp)  
+[DHT11 Humidity & Temperature Sensor Datneblatt](https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf?srsltid=AfmBOoqPCNak94LpvzB-ri8S4-YdEU9O6y3Oz7485Y2GzXr8UpFO9wqf)  
+[Erschütterungssensor B-231Datenblatt](https://www.alldatasheet.com/view.jsp?Searchword=B-231&sField=2)  
+[ChatGPT](https://chatgpt.com/)  
+[Perplexity](https://www.perplexity.ai/)  
