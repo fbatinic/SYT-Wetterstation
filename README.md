@@ -33,7 +33,7 @@ Der zweite Schritt war die Schaltung. Nachdem wir wussten, wie die einzelnen Bes
 Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sensoren nutzen und die Aufgabenstellung erfüllen können.
 
 ## 5. Bilder und Schaltungen
-![Schaltbild](WetterstationSchaltbild.jpg)  
+![Schaltbild](WetterstationSchaltbild.png)  
   
 ![Wetterstation Live](WetterstationLive.png)  
   
