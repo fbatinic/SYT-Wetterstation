@@ -13,12 +13,12 @@ Es wurde ein kompaktes System entwickelt, das mithilfe eines DHT11-Sensors in re
   - Temperatur
   - Luftfeuchtigkeit
   - Erschütterung
-- Graph zu den einzelnen Messwerten
+- LED-Status anzeige - Temperatur: orange (heiß), grün (normal), blau (kalt) 
+- Graph zu den einzelnen Messwerten - Durchschnitt der letzten 5min, Anzeige: letzte Stunde
 - Website
 #### EK:
 - LED-Steuerung durch:
-  - RGB-Colour-Picker
-  - Manuelle An-/Ausschaltung
+  - RGB-Colour-Picker - Zwischen Messzeiten
 
 ## 3.  Theorie
 Eine Wetterstation misst Umweltbedingungen wie Temperatur, Luftfeuchtigkeit oder Erschütterungen mithilfe spezieller Sensoren. Der DHT11-Sensor erfasst Temperatur und Luftfeuchtigkeit - der B23-Schocksensor erkennt Erschütterungen und gibt bei Bewegung ein digitales Signal aus. Die Messwerte werden regelmäßig erfasst, bereinigt (z. B. Ausreißer entfernt, Durchschnitt berechnet) und mit einem Zeitstempel versehen. Über WLAN stellt der Mikrocontroller die Daten auf einer Webseite dar, sodass sie einfach im Browser abgerufen werden können.
@@ -28,7 +28,11 @@ Eine Wetterstation misst Umweltbedingungen wie Temperatur, Luftfeuchtigkeit oder
 #### a) Informieren
 Unser erster Schritt war, die Datenblätter des Mikrocontrollers und der Sensoren anzusehen, um eine ungefähre Idde zu haben, wie wir diese für die Wetterstation einsetzen können. 
 #### b) Schaltung
-Der zweite Schritt war die Schaltung. Nachdem wir wussten, wie die einzelnen Bestandteile funktionieren, haben wir diese sinnvoll miteinander verbunden.
+Der zweite Schritt war die Schaltung. Nachdem wir wussten, wie die einzelnen Bestandteile funktionieren, haben wir diese sinnvoll miteinander verbunden.  
+Folgende Materialien wurden verwendet:  
+- 1x ESP32C3 Dev Module
+- 1x DHT11 (Temperatur und Luftfeuchtigkeit)
+- 1x B23_1 (Erschütterungen)
 #### c) Code
 Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sensoren nutzen und die Aufgabenstellung erfüllen können.
 
