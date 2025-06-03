@@ -34,9 +34,14 @@ Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sens
 
 ## 5. Bilder und Schaltungen
 ![Schaltbild](WetterstationSchaltbild.jpg)  
+  
 ![Wetterstation Live](WetterstationLive.png)  
-![Website Screenshot 1](WebsiteScreenshot1.jpg)  
+  
+![Website Screenshot 1](WebsiteScreenshot1.png)  
+  
 ![Website Screenshot 2](WebsiteScreenshot2.jpg)  
+
+    
 
 ## 6. Code
 <pre>```cpp
