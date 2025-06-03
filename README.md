@@ -35,7 +35,7 @@ Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sens
 ## 5. Bilder und Schaltungen
 ![Schaltbild](WetterstationSchaltbild.png)  
   
-![Wetterstation Live](WetterstationLive.png)  
+![Wetterstation Live](WetterstationLive.jpg)  
   
 ![Website Screenshot 1](WebsiteScreenshot1.png)  
   
