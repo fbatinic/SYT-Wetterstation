@@ -33,14 +33,14 @@ Der zweite Schritt war die Schaltung. Nachdem wir wussten, wie die einzelnen Bes
 Nun haben wir einen Code geschrieben, mit dem wir die Funktionalitäten der Sensoren nutzen und die Aufgabenstellung erfüllen können.
 
 ## 5. Bilder und Schaltungen
-![Schaltbild](Pfad/zur/datei.png)  
-![Wetterstation Live](Pfad/zur/datei.png)  
-![Website Screenshot 1](Pfad/zur/datei.png)  
-![Website Screenshot 2](C:\Users\batin\OneDrive - tgm - Die Schule der Technik\SYT\GK\Wetterstation\WebsiteScreenshot2.jpg)  
+![Schaltbild](WetterstationSchaltbild.jpg)  
+![Wetterstation Live](WetterstationLive.png)  
+![Website Screenshot 1](WebsiteScreenshot1.jpg)  
+![Website Screenshot 2](WebsiteScreenshot2.jpg)  
 
 ## 6. Code
 <pre>```cpp
-Das hier sollte der richtige Code sein:                                                                  #include <WiFi.h>
+#include <WiFi.h>
 #include <WebServer.h>
 #include <DHT.h>
 #include <time.h>
