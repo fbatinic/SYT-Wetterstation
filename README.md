@@ -1,5 +1,5 @@
 # SYT Wetterstation
-Verfasser: Franka Batinic, Elena Vuckovic, Angelina Glatzl
+Verfasser: Franka Batinic, Elena Vuckovic, Angelina Glatzl  
 Datum: **03.06.2025**
 
 ## 1.  Einführung
